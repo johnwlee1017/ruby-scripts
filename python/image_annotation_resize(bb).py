@@ -6,10 +6,10 @@ from PIL import Image, ImageFile
 
 
 def main():
-    input = "/Users/kevinbeom/Desktop/Applied_Invention/a1220796.csv"
-    output = "/Users/kevinbeom/Desktop/Applied_Invention/output.csv"
-    hd_folder = "/Users/kevinbeom/Desktop/Applied_Invention/hd_images/"
-    crop_folder = "/Users/kevinbeom/Desktop/Applied_Invention/crop_images/"
+    input = "(path to csv data)"
+    output = "(path to new csv data)"
+    hd_folder = "(path to directory)"
+    crop_folder = "(path to directory)"
     final_arr = []
 
     with open(input, 'r') as csvfile:
@@ -19,30 +19,39 @@ def main():
         for row in source:
             print("working")
             # column number of HD Image
-            hd_link = get_image(row[1], hd_folder)
+            hd_link = get_image(row[3], hd_folder)
             name = hd_link[1]
             hd_img = Image.open(hd_link[0])
             # column number of downsample image
-            ds_img = row[3]
+            ds_img = row[4]
             # column number of annotation
-            pre_anno = row[5]
+            pre_anno = row[0]
             if pre_anno == "" or pre_anno == " ":
                 continue
-            anno = json.loads(pre_anno)['shapes']
+            anno = json.loads(pre_anno)
             # column number unique id
             # rid = row[16]
-            # sizehd = hd_img.size
-            # sizeds = getsizes(ds_img)
-            # w_ratio = sizehd[0]/sizeds[0]
-            # h_ratio = sizehd[1]/sizeds[1]
+            sizehd = hd_img.size
+            sizeds = getsizes(ds_img)
+            w_ratio = sizehd[0]/sizeds[0]
+            h_ratio = sizehd[1]/sizeds[1]
+
+            # print(sizehd)
+            # print(sizeds)
+            # print("**********")
 
             j = 0
             for shape in anno:
 
-                left = shape['x']
-                top = shape['y']
-                right = shape['x'] + shape['width']
-                bottom = shape['y'] + shape['height']
+                left_ds = shape['x']
+                top_ds= shape['y']
+                right_ds= shape['x'] + shape['width']
+                bottom_ds= shape['y'] + shape['height']
+
+                left = left_ds * w_ratio
+                top = top_ds * h_ratio
+                right = right_ds * w_ratio
+                bottom = bottom_ds * h_ratio
 
                 # top, left, bottom, right = 0, 0, 0, 0
                 # shape_dict = {}
