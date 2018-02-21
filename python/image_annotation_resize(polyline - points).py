@@ -6,10 +6,10 @@ from PIL import Image, ImageFile
 
 
 def main():
-    input = "/Users/johnlee/Desktop/test/example_data.csv"
-    output = "/Users/johnlee/Desktop/test/output.csv"
-    hd_folder = "/Users/johnlee/Desktop/test/hd_images/"
-    crop_folder = "/Users/johnlee/Desktop/test/crop_images/"
+    input = "(path to csv data)"
+    output = "(path to new csv data)"
+    hd_folder = "(path to directory)"
+    crop_folder = "(path to directory)"
     final_arr = []
 
     with open(input, 'r') as csvfile:
