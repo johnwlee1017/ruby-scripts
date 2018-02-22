@@ -47,11 +47,13 @@ def main():
                 top_ds= shape['y']
                 right_ds= shape['x'] + shape['width']
                 bottom_ds= shape['y'] + shape['height']
+                
+                # Converting annotations (box points) to fit in hd images and expanding box by 50 pixels
 
-                left = left_ds * w_ratio
-                top = top_ds * h_ratio
-                right = right_ds * w_ratio
-                bottom = bottom_ds * h_ratio
+                left = (left_ds * w_ratio) - 50
+                top = (top_ds * h_ratio) - 50
+                right = (right_ds * w_ratio) + 50
+                bottom = (bottom_ds * h_ratio) + 50
 
                 # top, left, bottom, right = 0, 0, 0, 0
                 # shape_dict = {}
