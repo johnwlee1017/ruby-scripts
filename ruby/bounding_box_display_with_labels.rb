@@ -1,35 +1,42 @@
 require 'RMagick'
 require 'json'
+require 'csv'
 
-file = File.read('some.json')
-json = JSON.parse(file)
 
-json.each do |json|
-  image = Magick::Image.read(json['url']).first
+input = '/Users/johnlee/Desktop/ruby-scripts/data/test.csv'
+# output = '/Users/johnlee/Desktop/ruby-scripts/'
+
+CSV.foreach(input, :headers => true) do |row|
+
+  img = row['url']
+  img_file = row['_unit_id'] + '.jpg'
+
+  image = Magick::Image.read(img).first
   dt = Magick::Draw.new
   dt.fill_opacity(0)
   dt.stroke('#00ff00')
 
-  if json['annotation'] != ''
-    annotation = JSON.parse(json['annotation']) # Array of annotations
+  if row['annotation'] != nil
+    annotation = JSON.parse(row['annotation']) # Array of annotations
     anno = annotation['shapes']
     p anno
     p "********"
 
     if anno.count > 0
       anno.each do |a|
-        p a['x']
-        p a['y']
-        p a['tag']
-        p "*********************"
+        # p a['x']
+        # p a['y']
+        # p a['tag']
+        # p "*********************"
         dt.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
+        ## To display the labels
         if a['tag'] != nil
           dt.text(a['x'], a['y'], a['tag'])
         end
       end
     end
 
-    image_file = json['_unit_id'].to_s + '.jpg'
+    image_file = row['_unit_id'].to_s + '.jpg'
     dt.draw(image)
     image.write(image_file)
   end
