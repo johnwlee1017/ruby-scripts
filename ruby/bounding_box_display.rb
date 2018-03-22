@@ -1,24 +1,33 @@
 require 'RMagick'
 require 'json'
+require 'csv'
 
-file = File.read('40_IoU_results(2nd run).json')
-json = JSON.parse(file)
 
-json.each do |json|
-  image = Magick::Image.read(json['image_url']).first
+input = '/Users/johnlee/Desktop/ruby-scripts/data/test.csv'
+# output = '/Users/johnlee/Desktop/ruby-scripts/'
+
+CSV.foreach(input, :headers => true) do |row|
+
+  img = row['url']
+  img_file = row['_unit_id'] + '.jpg'
+
+  image = Magick::Image.read(img).first
   dt = Magick::Draw.new
   dt.fill_opacity(0)
   dt.stroke('#00ff00')
 
-  annotation = JSON.parse(json['annotation']) # Array of annotations
+  if row['annotation'] != nil
+    annotation = JSON.parse(row['annotation']) # Array of annotations
+    anno = annotation['shapes']
 
-  if annotation.count > 0
-    annotation.each do |a|
-      dt.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
+    if anno.count > 0
+      anno.each do |a|
+        dt.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
+      end
     end
-  end
 
-  image_file = json['_unit_id'].to_s + '.jpg'
-  dt.draw(image)
-  image.write(image_file)
+    image_file = row['_unit_id'].to_s + '.jpg'
+    dt.draw(image)
+    image.write(image_file)
+  end
 end
