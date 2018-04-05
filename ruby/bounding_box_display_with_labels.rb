@@ -3,7 +3,7 @@ require 'json'
 require 'csv'
 
 
-input = '/Users/johnlee/Desktop/ruby-scripts/data/f1251410.csv'
+input = '/Users/johnlee/Desktop/ruby-scripts/data/f1252067.csv'
 # output = '/Users/johnlee/Desktop/ruby-scripts/'
 
 CSV.foreach(input, :headers => true) do |row|
@@ -17,6 +17,7 @@ CSV.foreach(input, :headers => true) do |row|
 
   ## Draw text
   tt = Magick::Draw.new
+  tt.text_undercolor('#D3D3D380')  # Optional text background
 
   if row['annotation'] != nil
     annotation = JSON.parse(row['annotation']) # Array of annotations
@@ -29,7 +30,6 @@ CSV.foreach(input, :headers => true) do |row|
         bb.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
         ## To display the labels
         if a['tag'] != nil
-          tt.text_undercolor('#D3D3D380')  # Optional text background
           tt.text(a['x'], a['y'], a['tag'])
         end
       end
