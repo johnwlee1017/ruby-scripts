@@ -3,18 +3,20 @@ require 'json'
 require 'csv'
 
 
-input = '/Users/johnlee/Desktop/ruby-scripts/data/test.csv'
+input = '/Users/johnlee/Desktop/ruby-scripts/data/f1251410.csv'
 # output = '/Users/johnlee/Desktop/ruby-scripts/'
 
 CSV.foreach(input, :headers => true) do |row|
+  p "** running **"
 
-  img = row['url']
-  img_file = row['_unit_id'] + '.jpg'
+  image = Magick::Image.read(row['image_url']).first
+  ## Draw bounding box
+  bb = Magick::Draw.new
+  bb.fill_opacity(0)
+  bb.stroke('#00ff00')
 
-  image = Magick::Image.read(img).first
-  dt = Magick::Draw.new
-  dt.fill_opacity(0)
-  dt.stroke('#00ff00')
+  ## Draw text
+  tt = Magick::Draw.new
 
   if row['annotation'] != nil
     annotation = JSON.parse(row['annotation']) # Array of annotations
@@ -24,20 +26,18 @@ CSV.foreach(input, :headers => true) do |row|
 
     if anno.count > 0
       anno.each do |a|
-        # p a['x']
-        # p a['y']
-        # p a['tag']
-        # p "*********************"
-        dt.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
+        bb.rectangle(a['x'], a['y'], (a['x']+a['width']), (a['y']+a['height']))
         ## To display the labels
         if a['tag'] != nil
-          dt.text(a['x'], a['y'], a['tag'])
+          tt.text_undercolor('#D3D3D380')  # Optional text background
+          tt.text(a['x'], a['y'], a['tag'])
         end
       end
     end
 
     image_file = row['_unit_id'].to_s + '.jpg'
-    dt.draw(image)
+    bb.draw(image)
+    tt.draw(image)
     image.write(image_file)
   end
 end
