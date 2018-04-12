@@ -7,7 +7,6 @@ input = '/Users/johnlee/Desktop/ruby-scripts/data/f1252067.csv'
 # output = '/Users/johnlee/Desktop/ruby-scripts/'
 
 CSV.foreach(input, :headers => true) do |row|
-  p "** running **"
 
   image = Magick::Image.read(row['image_url']).first
   ## Draw bounding box
